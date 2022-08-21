@@ -14,7 +14,7 @@ object PoolDataService {
 
   case class QueryResult(quantile: Double, totalElement: Int)
 
-  def addPoolData(data: PoolData): Future[UpdateResult] = Future(PoolRepository.addPoolData(data))
+  def addPoolData(data: PoolData): Future[UpdateResult] = Future(PoolRepository.addData(data))
 
   def query(query: PoolQuery): Future[QueryResult] = Future{
    PoolRepository.getPool(query.poolId) match {

@@ -7,6 +7,8 @@ import scala.collection.mutable
 object PoolRepository {
   private val _storage: mutable.Map[Int, List[Int]] = mutable.Map.empty[Int, List[Int]]
 
+  def reset(): Unit = _storage.clear()
+
   trait UpdateResult {
     def message: String
   }
@@ -21,13 +23,13 @@ object PoolRepository {
     }
   }
 
-  def addPoolData(data: PoolData): UpdateResult = {
+  def addData(data: PoolData): UpdateResult = {
     _storage.get(data.poolId) match {
       case None =>
-        _storage += (data.poolId -> data.poolValues)
+        _storage += (data.poolId -> data.poolValues.sorted)
         UpdateResult.Inserted
       case Some(values) =>
-        _storage += (data.poolId -> (values ::: data.poolValues))
+        _storage += (data.poolId -> (values ::: data.poolValues).sorted)
         UpdateResult.Appended
     }
   }

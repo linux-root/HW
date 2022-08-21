@@ -7,6 +7,7 @@ import play.api.Play.materializer
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test._
+import repository.PoolRepository
 import services.PoolDataService.QueryResult
 
 /**
@@ -17,6 +18,8 @@ import services.PoolDataService.QueryResult
 class HomeWorkControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   private lazy val controller = inject[HomeWorkController]
+
+  PoolRepository.reset()
 
   "HomeWorkController add" should {
 
@@ -53,7 +56,7 @@ class HomeWorkControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injec
       val result = call(controller.query, request)
 
       status(result) mustBe 200
-      contentAsJson(result) mustBe Json.toJson(QueryResult(2, 5))
+      contentAsJson(result) mustBe Json.toJson(QueryResult(6, 5))
     }
   }
 }
