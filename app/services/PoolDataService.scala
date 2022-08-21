@@ -12,7 +12,7 @@ import scala.concurrent.Future
 object PoolDataService {
   implicit val fmt: Format[QueryResult] = Json.format[QueryResult]
 
-  case class QueryResult(quantile: Int, totalElement: Int)
+  case class QueryResult(quantile: Double, totalElement: Int)
 
   def addPoolData(data: PoolData): Future[UpdateResult] = Future(PoolRepository.addPoolData(data))
 
