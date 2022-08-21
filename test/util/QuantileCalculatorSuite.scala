@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class QuantileCalculatorSuite extends AnyFunSuite with ScalaCheckPropertyChecks{
-  private val ACCEPTED_ERROR: Double = 0.01
+  private val ACCEPTED_ERROR: Double = 0.001
 
   test("quantile as median") {
     val values = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -13,9 +13,15 @@ class QuantileCalculatorSuite extends AnyFunSuite with ScalaCheckPropertyChecks{
     assert(calculatedQuantile == 5.5)
   }
 
-  test("test case found by property testing"){
+  test("edge case found by property testing 01"){
     val values = List(0, 0, 0, 0)
     val calculatedQuantile = QuantileCalculator.percentile(1, values)
+    assert(calculatedQuantile == 0)
+  }
+
+  test("edge case found by property testing 02"){
+    val values = List(0, 0, 0, 0)
+    val calculatedQuantile = QuantileCalculator.percentile(0.0, values)
     assert(calculatedQuantile == 0)
   }
 
@@ -28,11 +34,12 @@ class QuantileCalculatorSuite extends AnyFunSuite with ScalaCheckPropertyChecks{
    * property testing based on percentile definition
    */
   forAll(genRandomValuesAndPercentile) { case (values, percentile) =>
-    whenever(values.size > 3) {
+    val numberOfValues = values.size
+    whenever(numberOfValues > 3) {
       val result = QuantileCalculator.percentile(percentile, values)
       val totalElementLessThanOrEqualToResult = values.count(_ <= result)
       val error = (totalElementLessThanOrEqualToResult / values.length) * 100 - percentile
-      assert(error - 100.0 < ACCEPTED_ERROR || (error < ACCEPTED_ERROR))
+      assert(totalElementLessThanOrEqualToResult == numberOfValues|| (error < ACCEPTED_ERROR))
     }
   }
 
